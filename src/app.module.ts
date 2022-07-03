@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { TasksModule } from './tasks/tasks.module';
 
-console.log(process.env);
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -16,7 +15,6 @@ console.log(process.env);
       password: process.env.DB_CONNECTION_PASSWORD,
       database: process.env.DB_CONNECTION_DATABASE,
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      synchronize: true,
     }),
     TasksModule,
   ],

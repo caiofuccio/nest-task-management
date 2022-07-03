@@ -1,73 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Task, TaskStatus } from './task.interface';
-import { v4 as uuid } from 'uuid';
+import { Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
+import { TaskStatusEnum } from './enum/task-status.enum';
+import { Task } from './task.interface';
+import { TasksRepository } from './tasks.repository';
 
 @Injectable()
 export class TasksService {
-  private tasks: Task[] = [];
+  constructor(private tasksRepository: TasksRepository) {}
 
-  getAll(): Task[] {
-    return this.tasks;
+  async getAllTasks(filters: FilterTasksDto): Promise<Task[]> {
+    return this.tasksRepository.getAll(filters);
   }
 
-  getById(id: string): Task {
-    const task = this.tasks.find((task) => task.id === id);
-
-    if (!task) {
-      throw new NotFoundException(`Task with id ${id} not found`);
-    }
-
-    return task;
+  async getTaskById(id: string): Promise<Task> {
+    return this.tasksRepository.getById(id);
   }
 
-  create(data: CreateTaskDto): Task {
-    const { title, description } = data;
-
-    const task: Task = {
-      id: uuid(),
-      title,
-      description,
-      status: TaskStatus.OPEN,
-    };
-
-    this.tasks.push(task);
-
-    return task;
+  async createTask(data: CreateTaskDto): Promise<Task> {
+    return this.tasksRepository.create(data);
   }
 
-  updateStatus(id: string, status: TaskStatus): Task {
-    this.tasks.filter((task) =>
-      task.id === id ? (task.status = status) : status,
-    );
-
-    return this.getById(id);
+  async deleteTask(id: string): Promise<void> {
+    return this.tasksRepository.delete(id);
   }
 
-  delete(id: string): void {
-    this.tasks = this.tasks.filter((task) => task.id !== id);
-  }
-
-  filterTasks(filters: FilterTasksDto): Task[] {
-    const { status, search } = filters;
-
-    let tasks = this.getAll();
-
-    if (status) {
-      tasks = tasks.filter((task) => task.status === status);
-    }
-
-    if (search) {
-      tasks = tasks.filter((task) =>
-        Object.keys(task)
-          .map((key) => task[key] === search)
-          .some((element) => element === true),
-      );
-
-      console.log(tasks);
-    }
-
-    return tasks;
+  async updateTaskStatus(id: string, status: TaskStatusEnum): Promise<Task> {
+    return this.tasksRepository.updateStatus(id, status);
   }
 }
