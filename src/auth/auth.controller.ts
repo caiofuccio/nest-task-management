@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { VerificationInterface } from './interface/verification-return.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -12,7 +13,9 @@ export class AuthController {
   }
 
   @Post('signin')
-  signIn(@Body() authCredentials: AuthCredentialsDto): Promise<string> {
+  signIn(
+    @Body() authCredentials: AuthCredentialsDto,
+  ): Promise<VerificationInterface> {
     return this.authService.signIn(authCredentials);
   }
 }
