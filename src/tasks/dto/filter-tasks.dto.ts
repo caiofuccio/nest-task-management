@@ -8,5 +8,5 @@ export class FilterTasksDto {
 
   @IsOptional()
   @IsString()
-  title?: string;
+  search?: string;
 }

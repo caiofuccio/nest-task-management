@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { User } from 'src/auth/user.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
 import { TaskStatusEnum } from './enum/task-status.enum';
@@ -9,23 +10,27 @@ import { TasksRepository } from './tasks.repository';
 export class TasksService {
   constructor(private tasksRepository: TasksRepository) {}
 
-  async getAllTasks(filters: FilterTasksDto): Promise<Task[]> {
-    return this.tasksRepository.getAll(filters);
+  async getAllTasks(filters: FilterTasksDto, user: User): Promise<Task[]> {
+    return this.tasksRepository.getAll(filters, user);
   }
 
-  async getTaskById(id: string): Promise<Task> {
-    return this.tasksRepository.getById(id);
+  async getTaskById(id: string, user: User): Promise<Task> {
+    return this.tasksRepository.getById(id, user);
   }
 
-  async createTask(data: CreateTaskDto): Promise<Task> {
-    return this.tasksRepository.create(data);
+  async createTask(data: CreateTaskDto, user: User): Promise<Task> {
+    return this.tasksRepository.create(data, user);
   }
 
-  async deleteTask(id: string): Promise<void> {
-    return this.tasksRepository.delete(id);
+  async deleteTask(id: string, user: User): Promise<void> {
+    return this.tasksRepository.delete(id, user);
   }
 
-  async updateTaskStatus(id: string, status: TaskStatusEnum): Promise<Task> {
-    return this.tasksRepository.updateStatus(id, status);
+  async updateTaskStatus(
+    id: string,
+    status: TaskStatusEnum,
+    user: User,
+  ): Promise<Task> {
+    return this.tasksRepository.updateStatus(id, status, user);
   }
 }
